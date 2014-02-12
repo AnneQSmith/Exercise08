@@ -19,12 +19,27 @@ def make_chains(corpus,ntv):
     #  for each tuple -- current word and next word 
     #  if that tuple exists in the dictionary, append the value with a new word
 
+    # lw = len(input_words)
+    # for i in range (lw-ntv):
+    #     if not markov_dict.get((input_words[i],input_words[i+1]),False):
+    #         markov_dict[(input_words[i],input_words[i+1])] = [input_words[i+2]]
+    #     else:
+    #         markov_dict[(input_words[i],input_words[i+1])].append(input_words[i+2])
+
+
     lw = len(input_words)
-    for i in range (lw-ntv):
-        if not markov_dict.get((input_words[i],input_words[i+1]),False):
-            markov_dict[(input_words[i],input_words[i+1])] = [input_words[i+2]]
+    for i in range (lw - ntv):
+        
+        current_tuple = ()
+        for j in range(ntv):
+            current_tuple += (input_words[i+j],)
+            print i,j, current_tuple
+
+        if not markov_dict.get(current_tuple,False):
+            markov_dict[current_tuple] = [input_words[i+ntv]]
         else:
-            markov_dict[(input_words[i],input_words[i+1])].append(input_words[i+2])
+            markov_dict[current_tuple].append(input_words[i+ntv])
+
 
     # We ommited the very last bigram in the text.  We need to add it manually, and assign a value
 
@@ -76,9 +91,16 @@ def make_text(chains,n,ntv):
        #      new_key_tupple[k] = ngram[k+1]
 
        #  new_key_tupple[ntv-1] = choiceword
+        # print "ngram, value"
+        # print ngram,value
+        temp_tuple = ()
+        for k in range(ntv-1):
+            temp_tuple += (ngram[k+1],)
+           # print temp_tuple
 
-        new_key = (ngram[1],choiceword)
-        
+        # new_key = (ngram[1],choiceword)
+        new_key = (temp_tuple + (choiceword,))
+       # print new_key
 
         ngram = new_key
         value = chains.get(ngram,None)
