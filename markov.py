@@ -3,22 +3,12 @@
 from sys import argv
 from random import choice
 
-# def sanitize(dirtystring)
-#     return ' '
-    
-#     if sanitize:
-#         print "We are in the sanitize clause"
-#         # for word in input_words:
-#         #     word = input_words.lower()
-#         #     word = input_words.strip("!@#$%^&*()_+=-~`,./;\'\[\]\{\}\":?><" )
-# # fix the above with a range over the length
 
-#     # create blank dictionary   
 
-def make_chains(corpus,sanitize):
+def make_chains(corpus):
     """Takes an input text as a string and returns a dictionary of
     markov chains."""
-    # split and sanitize (maybe) the string so we have a list of words
+    # split the string so we have a list of words
     
     input_words = corpus.split()
 
@@ -34,7 +24,7 @@ def make_chains(corpus,sanitize):
             markov_dict[(input_words[i],input_words[i+1])] = [input_words[i+2]]
         else:
             markov_dict[(input_words[i],input_words[i+1])].append(input_words[i+2])
-  #  print markov_dict
+    print markov_dict
     # for key,value in markov_dict.iteritems():
     #     print key,value
 
@@ -49,8 +39,12 @@ def make_text(chains,n):
     # find a bigram to start off
     #TODO is there a better way to do this than popping then reinserting
 
+    print chains
+    
+#TODO  this is inelegant.  We should iterate through until we find a tuple in which 
+# first word is capitalized and use that as a start
+
     ngram,value = chains.popitem()
-    print ngram[0],ngram[1]
     chains[ngram] = value
     # print ngram[0]
     # print ngram[]
@@ -59,17 +53,19 @@ def make_text(chains,n):
 
     for i in range(int(n)):
          choiceword = choice(value)
-         wordlist.append(ngram[0])
-         wordlist.append(ngram[1])
+         if i == 0:
+            wordlist.append(ngram[0])
+            wordlist.append(ngram[1])
+         
          wordlist.append(choiceword)
+         print i
+         print wordlist
 
          new_key = (ngram[1],choiceword)
          ngram = new_key
          value = chains[ngram]  
     
-    print " ".join(wordlist)
-
-         
+        
 #we need to split the tuple in the key, create a new key with the second from the old
     
 
@@ -85,16 +81,16 @@ def make_text(chains,n):
 def main():
     filename = argv[1]
 # Do we want to change case, remove punctuation?
-    sanitize = argv[2]
 # How many ngrams do we want?
-    n = argv[3]
+    n = argv[2]
+
 #open filename
 #TODO clean up argument handling
     f = open(filename, "r")
     input_text = f.read()
     f.close()
 
-    chain_dict = make_chains(input_text,sanitize)
+    chain_dict = make_chains(input_text)
     random_text = make_text(chain_dict,n)
     print random_text
 
