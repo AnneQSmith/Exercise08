@@ -28,8 +28,8 @@ def make_chains(corpus):
 
     # We ommited the very last bigram in the text.  We need to add it manually, and assign a value
 
-    markov_dict[(input_words[lw-2],input_words[lw-1])] = [input_words[0]]
-    markov_dict[(input_words[lw-1],input_words[0])] = [input_words[1]]
+    # markov_dict[(input_words[lw-2],input_words[lw-1])] = [input_words[0]]
+    # markov_dict[(input_words[lw-1],input_words[0])] = [input_words[1]]
 
 #   print markov_dict
 
@@ -41,7 +41,7 @@ def make_text(chains,n):
     based off an original text."""
 
     # find a bigram to start off
-    #TODO is there a better way to do this than popping then reinserting?
+    #TODO keep trying until we get a tuple with the first value capitalized
     
     ngram = choice(chains.keys())
     value = chains.get(ngram)
@@ -69,7 +69,13 @@ def make_text(chains,n):
 
          new_key = (ngram[1],choiceword)
          ngram = new_key
-         value = chains[ngram]  
+         value = chains.get(ngram,None)
+         if value == None:
+
+            ngram = choice(chains.keys())
+            value = chains.get(ngram)
+
+            #break; 
 
 
     return " ".join(wordlist)
@@ -77,7 +83,7 @@ def make_text(chains,n):
 def main():
     filename = argv[1]
 
-# How many ngrams do we want to ?
+# Max # of ngrams over which to loop if we don't hit end-of-file
     n = argv[2]
 
 #TODO clean up argument handling, pick a nice default for n, check for file existence, etc.
