@@ -5,7 +5,7 @@ from random import choice
 
 
 
-def make_chains(corpus):
+def make_chains(corpus,ntv):
     """Takes an input text as a string and returns a dictionary of
     markov chains."""
 
@@ -20,7 +20,7 @@ def make_chains(corpus):
     #  if that tuple exists in the dictionary, append the value with a new word
 
     lw = len(input_words)
-    for i in range (lw-2):
+    for i in range (lw-ntv):
         if not markov_dict.get((input_words[i],input_words[i+1]),False):
             markov_dict[(input_words[i],input_words[i+1])] = [input_words[i+2]]
         else:
@@ -36,7 +36,7 @@ def make_chains(corpus):
     return markov_dict
 
 
-def make_text(chains,n):
+def make_text(chains,n,ntv):
     """Takes a dictionary of markov chains and returns random text
     based off an original text."""
 
@@ -58,24 +58,37 @@ def make_text(chains,n):
     # for nmgram, value in chains.iteritems():
 
     for i in range(int(n)):
-         choiceword = choice(value)
-         if i == 0:
-            wordlist.append(ngram[0])
-            wordlist.append(ngram[1])
-         
-         wordlist.append(choiceword)
-         # print i
-         # print wordlist
+        choiceword = choice(value)
+        if i == 0:
+            # wordlist.append(ngram[0])
+            # wordlist.append(ngram[1])
+            for j in range(ntv):
+                wordlist.append(ngram[j]) 
+            #     wordlist.append(choiceword)
+            #      # print i
+                 # print wordlist
 
-         new_key = (ngram[1],choiceword)
-         ngram = new_key
-         value = chains.get(ngram,None)
-         if value == None:
+        wordlist.append(choiceword)
+
+
+       #  # create new key of an arbitrary ngram length
+       #  for k in range(ntv-2):
+       #      new_key_tupple[k] = ngram[k+1]
+
+       #  new_key_tupple[ntv-1] = choiceword
+
+        new_key = (ngram[1],choiceword)
+        
+
+        ngram = new_key
+        value = chains.get(ngram,None)
+        
+        if value == None:
 
             ngram = choice(chains.keys())
             value = chains.get(ngram)
 
-            #break; 
+                    #break; 
 
 
     return " ".join(wordlist)
@@ -86,14 +99,16 @@ def main():
 # Max # of ngrams over which to loop if we don't hit end-of-file
     n = argv[2]
 
+    ntv = int(argv[3])
+
 #TODO clean up argument handling, pick a nice default for n, check for file existence, etc.
 
     f = open(filename, "r")
     input_text = f.read()
     f.close()
 
-    chain_dict = make_chains(input_text)
-    random_text = make_text(chain_dict,n)
+    chain_dict = make_chains(input_text,ntv)
+    random_text = make_text(chain_dict,n,ntv)
     print random_text
 
 if __name__ == "__main__":
