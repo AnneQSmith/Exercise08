@@ -22,11 +22,6 @@ def twitter_stuff(sentence):
 
 
 
-def get_one_sentence(markov_text):
-
-    better_text = "This is our second programatic tweet"
-    
-    return better_text
 
 def make_chains(corpus,ntv):
     """Takes an input text as a string and returns a dictionary of
@@ -137,6 +132,34 @@ def make_text(chains,n,ntv):
 
     return " ".join(wordlist)
 
+def get_one_sentence(markov_text):
+
+# We need to sanitize the text for twitter.
+# First word should be capitalized
+# Last character should be in [ '.','?'.'!']
+# maximum length = 140 character  or is it 139
+    
+
+    print markov_text
+    max_length = 140
+    sl = len(markov_text)
+    print sl
+
+#Find locaiton of first caital letter:
+    for i in range(sl):
+        if markov_text[i] >= 'A' and markov_text[i] <= 'Z':
+            print markov_text[i], markov_text
+            break
+    
+
+    if sl <= max_length:
+        better_text = markov_text
+    else:
+        better_text = markov_text[0:max_length]
+    
+    return better_text
+
+
 def main():
     filename = argv[1]
 
@@ -153,10 +176,21 @@ def main():
 
     chain_dict = make_chains(input_text,ntv)
     random_text = make_text(chain_dict,n,ntv)
-    print random_text
+  
     markov_tweet =  get_one_sentence(random_text)
-    #print markov_tweet
-    twitter_stuff(markov_tweet)
+
+    print markov_tweet
+
+    twitter_live = os.environ.get('TWITTER_LIVE')
+    
+    print twitter_live
+    
+    if twitter_live == 'YES':
+        #print 'do we really want a live tweet?'
+        twitter_stuff(markov_tweet)
+    else:
+        print markov_tweet
+        
 
 if __name__ == "__main__":
     main()
