@@ -2,8 +2,31 @@
 
 from sys import argv
 from random import choice
+import os
+import twitter
+
+def twitter_stuff(sentence):
+
+#TODO use a safer method than won't crash if environment variable not there
+
+    cs = os.environ.get('TWITTER_API_SECRET')
+    ck = os.environ.get('TWITTER_API_KEY')
+    ts = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET')
+    tk = os.environ.get('TWITTER_ACCESS_TOKEN')
+
+    api = twitter.Api(consumer_key=ck,consumer_secret=cs,access_token_key=tk,access_token_secret=ts)
+    status = api.PostUpdate(sentence)
+    print status
+
+    return
 
 
+
+def get_one_sentence(markov_text):
+
+    better_text = "This is our second programatic tweet"
+    
+    return better_text
 
 def make_chains(corpus,ntv):
     """Takes an input text as a string and returns a dictionary of
@@ -33,7 +56,6 @@ def make_chains(corpus,ntv):
         current_tuple = ()
         for j in range(ntv):
             current_tuple += (input_words[i+j],)
-            print i,j, current_tuple
 
         if not markov_dict.get(current_tuple,False):
             markov_dict[current_tuple] = [input_words[i+ntv]]
@@ -132,6 +154,9 @@ def main():
     chain_dict = make_chains(input_text,ntv)
     random_text = make_text(chain_dict,n,ntv)
     print random_text
+    markov_tweet =  get_one_sentence(random_text)
+    #print markov_tweet
+    twitter_stuff(markov_tweet)
 
 if __name__ == "__main__":
     main()
